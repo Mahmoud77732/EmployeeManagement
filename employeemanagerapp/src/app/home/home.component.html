@@ -1,0 +1,196 @@
+
+
+<div class="row mb-2 border-bottom border-secondary-subtle pb-3 d-flex justify-content-between">
+  <div class="col-md-6">
+    <!-- Button trigger modal -->
+    <button class="btn btn-primary" (click)="onOpenModal(undefined, 'add')">
+      Add Employee
+    </button>
+  </div>
+
+  <div class="col-md-6">
+    <form class="form-inline">
+      <input
+        class="form-control"
+        type="search"
+        (ngModelChange) = "searchEmployee(key.value)"
+        #key="ngModel"
+        ngModel
+        name="key"
+        id="searchName"
+        placeholder="Search employee..."
+      />
+    </form>
+  </div>
+</div>
+
+<!-- '?' to check if obj is exist or not -->
+<div id="main-container" class="row d-flex-start justify-content-evenly align-items-center">
+    <div *ngFor="let employee of employees" class="card col-md-3" style="width: 18rem;">
+      <div class="row  d-flex justify-content-between me-auto">
+        <div class="col-lg-4">
+          <img src="{{employee?.imageUrl}}" class="card-img-top img-fluid rounded-circle w-60" alt="person">
+        </div>
+        <div class="col-lg-6 card-body">
+          <h5 class="card-title">{{employee?.name}}</h5>
+          <p class="card-text">{{employee?.jobTitle}}</p>
+        </div>
+      </div>
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item">
+          <div class="d-flex justify-content-between">
+            <label>Email : </label>
+            <i class="fa fa-envelope" aria-hidden="true"></i>
+          </div>
+          <p class="card-text">{{employee?.email}}</p>
+        </li>
+        <li class="list-group-item d-flex justify-content-between">
+          <div>
+            <label>Phone : </label>
+            <span class="card-text">{{employee?.phone}}</span>
+          </div>
+          <div>
+            <i class="fa fa-phone" aria-hidden="true"></i>
+          </div>
+        </li>
+      </ul>
+      <div class="card-body d-flex justify-content-between align-items-center">
+        <div class="d-flex justify-content-between">
+          <i class="fab fa-facebook" aria-hidden="true"></i>
+          <i class="fab fa-twitter" aria-hidden="true"></i>
+          <i class="fab fa-linkedin" aria-hidden="true"></i>
+        </div>
+        <div class="d-flex justify-content-between">
+          <a (click)="onOpenModal(employee, 'edit')" class="btn btn-info me-1">Update</a>
+          <a (click)="onOpenModal(employee, 'delete')" class="btn btn-danger">Delete</a>
+        </div>
+      </div>
+    </div>
+</div>
+
+
+
+<!--! modals for {add, edit, delete} forms -->
+
+
+<!-- add __ addEmployeeModal -->
+<div class="modal fade" id="addEmployeeModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Add Employee</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form [formGroup]="addForm" (ngSubmit)="addEmployee()">
+      <div class="modal-body">
+          <div class="form-group form-floating mb-3">
+            <input formControlName="name" type="text" class="form-control" id="nameInput" placeholder="name">
+            <label for="nameInput">Name</label>
+          </div>
+          <div class="form-group form-floating mb-3">
+            <input formControlName="email" type="email" class="form-control" id="emailInput" placeholder="name@example.com">
+            <label for="emailInput">Email address</label>
+          </div>
+          <div class="form-group form-floating mb-3">
+            <input formControlName="jobTitle" type="text" class="form-control" id="jobTitleInput" placeholder="job title">
+            <label for="jobTitleInput">Job Title</label>
+          </div>
+          <div class="form-group form-floating mb-3">
+            <input formControlName="phone" type="text" class="form-control" id="phoneInput" placeholder="Phone number">
+            <label for="phoneInput">Phone</label>
+          </div>
+          <div class="form-group form-floating mb-3">
+            <input formControlName="imageUrl" type="text" class="form-control" id="imageUrlInput" placeholder="Image Url">
+            <label for="imageUrlInput">Image Url</label>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" id="add-employee-form" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button [disabled]="addForm.invalid" type="submit" class="btn btn-primary">Save changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+<!-- edit __ updateEmployeeModal -->
+<div class="modal fade" id="updateEmployeeModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Update Employee {{updatedEmployee?.name}}</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form [formGroup]="editForm" (ngSubmit)="updateEmployee(editForm.value)">
+        <div class="modal-body">
+          <div class="form-group">
+            <input type="hidden" formControlName="id" value="{{updatedEmployee?.id}}" class="form-control" id="idInput" placeholder="name">
+          </div>
+          <div class="form-group">
+            <input type="hidden" formControlName="employeeCode" value="{{updatedEmployee?.employeeCode}}" class="form-control" id="employeeCodeInput" placeholder="name">
+          </div>
+            <div class="form-group form-floating mb-3">
+              <input formControlName="name" value="{{updatedEmployee?.name}}" type="text" class="form-control" id="nameInput" placeholder="name">
+              <label for="nameInput">Name</label>
+            </div>
+            <div class="form-group form-floating mb-3">
+              <input formControlName="email" value="{{updatedEmployee?.email}}" type="email" class="form-control" id="emailInput" placeholder="name@example.com">
+              <label for="emailInput">Email address</label>
+            </div>
+            <div class="form-group form-floating mb-3">
+              <input formControlName="jobTitle" value="{{updatedEmployee?.jobTitle}}" type="text" class="form-control" id="jobTitleInput" placeholder="job title">
+              <label for="jobTitleInput">Job Title</label>
+            </div>
+            <div class="form-group form-floating mb-3">
+              <input formControlName="phone" value="{{updatedEmployee?.phone}}" type="text" class="form-control" id="phoneInput" placeholder="Phone number">
+              <label for="phoneInput">Phone</label>
+            </div>
+            <div class="form-group form-floating mb-3">
+              <input formControlName="imageUrl" value="{{updatedEmployee?.imageUrl}}" type="text" class="form-control" id="imageUrlInput" placeholder="Image Url">
+              <label for="imageUrlInput">Image Url</label>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" id="update-employee-form" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Save changes</button>
+          </div>
+        </form>
+    </div>
+  </div>
+</div>
+
+<!-- delete __ deleteEmployeeModal -->
+<div class="modal fade" id="deleteEmployeeModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Delete Employee</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form [formGroup]="editForm" (ngSubmit)="updateEmployee(editForm.value)">
+        <div class="modal-body">
+          <div class="form-group">
+            <input type="hidden" formControlName="id" value="{{deletedEmployee?.id}}" class="form-control" id="idInput" placeholder="name">
+          </div>
+          <p>Are you sure you want to delete the employee {{deletedEmployee?.name}}?</p>
+        </div>
+        <div class="modal-footer">
+          <button id="delete-employee-form" type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+          <button (click)="deleteEmployee(editForm.value.id)" type="button" class="btn btn-danger">Yes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+<!-- Notification for no employees -->
+<div *ngIf="employees?.length == 0" class="row mt-2">
+  <div class="col-lg-12 col-md-12 col-xl-12">
+    <div class="alert alert-info" role="alert">
+      <h4 class="alert-heading">No Employees!</h4>
+      <p>No Employees were found.</p>
+    </div>
+  </div>
+</div>
